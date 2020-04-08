@@ -1,0 +1,1 @@
+# thing-temperature-sensor.java
