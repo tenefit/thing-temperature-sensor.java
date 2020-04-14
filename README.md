@@ -13,20 +13,20 @@ In the following sections, the following values are assumed:
 
 At startup, and anytime the state is changed, the sensor will publish the state.
 
-- **topic:** `state/4`
+- **topic:** `state/4` (specified with `--state-topic`)
 - **headers:** none
 - **payload:**
   ```json
   { "id": "4", "row": "9", "state": "ON" }
   ```
 
-### Reading control messages
+### Receiving control messages
 
 At startup, the sensor subscribes for control messages. When a message is received, the sensor's state is updated. If it is set to `OFF`, it will stop publishing readings. If it is set to `ON`, it will resume publishing readings.
 
 In addition, the sensor will publish its new state (see [Publishing state](#publishing-state) above).
 
-- **topic:** `control/4`
+- **topic:** `control/4` (specified with `--control-topic`)
 - **headers:** none
 - **payload:**
   ```json
@@ -35,12 +35,12 @@ In addition, the sensor will publish its new state (see [Publishing state](#publ
 
 ### Publishing readings
 
-If the sensor state is `ON`, it will publish readings at random interals.
+If the sensor state is `ON`, it will publish readings at random interals. All temperatures are published in Celsius.
 
-- **topic:** `sensors/4`
+- **topic:** `sensors/4` (specified with `--sensors-topic`)
 - **headers:**
   | name | value |
-  | ---- | ----- |
+  | ---- | ----: |
   | row | 9 |
 - **payload:**
   ```json
