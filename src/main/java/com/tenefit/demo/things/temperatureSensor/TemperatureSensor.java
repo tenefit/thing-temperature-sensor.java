@@ -3,9 +3,9 @@
  */
 package com.tenefit.demo.things.temperatureSensor;
 
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
@@ -30,14 +30,34 @@ public class TemperatureSensor
         ON, OFF
     }
 
-    private final String tempUnit = "C";
+    public enum TemperatureUnit
+    {
+        CELSIUS("C"),
+        FAHRENHEIT("F"),
+        KELVIN("K");
+
+        private final String value;
+
+        TemperatureUnit(
+            String value)
+        {
+            this.value = value;
+        }
+
+        public String value()
+        {
+            return value;
+        }
+    }
+
+    private final TemperatureUnit temperatureUnit = TemperatureUnit.CELSIUS;
 
     private final int minTemp = 75;
     private final int maxTemp = 200;
 
     // milliseconds
-    private final long minReadingPublishInterval = 500;
-    private final long maxReadingPublishInterval = 2000;
+    private final long minReadingDelay = 500;
+    private final long maxReadingDelay = 2000;
 
     @Inject
     protected HelpOption<TemperatureSensor> help;
@@ -96,11 +116,9 @@ public class TemperatureSensor
     @NotEmpty
     private String row;
 
-    private final Random rand;
-
     private SensorState sensorState;
 
-    Mqtt5BlockingClient client;
+    private Mqtt5BlockingClient client;
 
     public static void main(String[] args) throws InterruptedException, ExecutionException
     {
@@ -111,7 +129,6 @@ public class TemperatureSensor
 
     public TemperatureSensor()
     {
-        rand = new Random();
         sensorState = SensorState.ON;
     }
 
@@ -121,8 +138,6 @@ public class TemperatureSensor
         {
             return;
         }
-
-        System.out.format("sensor %s connecting...\n", id);
 
         client = Mqtt5Client.builder()
             .identifier(UUID.randomUUID().toString())
@@ -145,19 +160,19 @@ public class TemperatureSensor
 
         while (true)
         {
-            publishReading();
-            long interval = rand.longs(minReadingPublishInterval, maxReadingPublishInterval + 1).findFirst().getAsLong();
-            Thread.sleep(interval);
+            publishReadingIfNecessary();
+            long delay = ThreadLocalRandom.current().nextLong(minReadingDelay, maxReadingDelay + 1);
+            Thread.sleep(delay);
         }
     }
 
-    private void publishReading()
+    private void publishReadingIfNecessary()
     {
         if (sensorState == SensorState.ON)
         {
-            int temp = rand.ints(minTemp, maxTemp + 1).findFirst().getAsInt();
+            int temp = ThreadLocalRandom.current().nextInt(minTemp, maxTemp + 1);
             String readingMessage = String.format("{\"id\":\"%s\",\"unit\":\"%s\",\"value\":\"%d\"}",
-                id, tempUnit, temp);
+                id, temperatureUnit, temp);
             Mqtt5UserProperties userProperties = Mqtt5UserProperties.builder()
                 .add("row", row)
                 .build();
@@ -170,17 +185,15 @@ public class TemperatureSensor
         }
     }
 
-    private void handleStateChange(SensorState state)
+    private void handleStateChange(
+        SensorState state)
     {
         if (state != sensorState)
         {
             sensorState = state;
             // Publish immediately to appear responsive rather than waiting until
             // the next message comes along
-            if (sensorState == SensorState.ON)
-            {
-                publishReading();
-            }
+            publishReadingIfNecessary();
         }
     }
 }
