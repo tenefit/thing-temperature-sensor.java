@@ -3,11 +3,15 @@
  */
 package com.tenefit.demo.things.temperatureSensor;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.StringReader;
 import java.util.function.Consumer;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
 import com.hivemq.client.mqtt.MqttGlobalPublishFilter;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
@@ -28,8 +32,6 @@ public class ControlSubscriber implements Runnable
     final String row;
     final Consumer<SensorState> stateChangeHandler;
 
-    final Gson gson;
-
     public ControlSubscriber(
         Mqtt5BlockingClient client,
         String stateTopic,
@@ -44,7 +46,6 @@ public class ControlSubscriber implements Runnable
         this.id = id;
         this.row = row;
         this.stateChangeHandler = stateChangeHandler;
-        this.gson = new Gson();
     }
 
     @Override
@@ -58,30 +59,29 @@ public class ControlSubscriber implements Runnable
                 .send();
             while (true)
             {
-                Mqtt5Publish result = publishes.receive();
-                JsonObject message = gson.fromJson(new String(result.getPayloadAsBytes()), JsonObject.class);
-                JsonElement stateEl = message.get("state");
-                if (stateEl == null)
+                Mqtt5Publish inputMessage = publishes.receive();
+                try (JsonReader inputJson = Json.createReader(new StringReader(new String(inputMessage.getPayloadAsBytes()))))
                 {
-                    return;
+                    JsonObject input = inputJson.readObject();
+                    if (input.containsKey("state"))
+                    {
+                        SensorState state = SensorState.valueOf(input.getString("state"));
+                        stateChangeHandler.accept(state);
+                        String topic = String.format("%s/%s", stateTopic, id);
+                        byte[] output = Json.createObjectBuilder()
+                            .add("id", id)
+                            .add("row", row)
+                            .add("state", state.toString())
+                            .build()
+                            .toString()
+                            .getBytes(UTF_8);
+                        client.publishWith()
+                            .topic(topic)
+                            .payload(output)
+                            .qos(MqttQos.AT_MOST_ONCE)
+                            .send();
+                    }
                 }
-                try
-                {
-                    SensorState newState = SensorState.valueOf(stateEl.getAsString());
-                    stateChangeHandler.accept(newState);
-                    String newStateMessage = String.format("{\"id\":\"%s\",\"row\":\"%s\",\"state\":\"%s\"}",
-                        id, row, newState);
-                    client.publishWith()
-                        .topic(String.format("%s/%s", stateTopic, id))
-                        .payload(newStateMessage.getBytes())
-                        .qos(MqttQos.AT_MOST_ONCE)
-                        .send();
-                }
-                catch (IllegalArgumentException ex)
-                {
-                    // do nothing
-                }
-
             }
         }
         catch (InterruptedException ex)
