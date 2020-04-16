@@ -63,9 +63,9 @@ public class ControlSubscriber implements Runnable
                 try (JsonReader inputJson = Json.createReader(new StringReader(new String(inputMessage.getPayloadAsBytes()))))
                 {
                     JsonObject input = inputJson.readObject();
-                    SensorState state = SensorState.valueOf(input.getString("state"));
-                    if (state != null)
+                    if (input.containsKey("state"))
                     {
+                        SensorState state = SensorState.valueOf(input.getString("state"));
                         stateChangeHandler.accept(state);
                         String topic = String.format("%s/%s", stateTopic, id);
                         byte[] output = Json.createObjectBuilder()
