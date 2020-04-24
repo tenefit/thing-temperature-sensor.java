@@ -13,7 +13,7 @@ In the following sections, the following values are assumed:
 
 At startup, and anytime the state is changed, the sensor will publish the state.
 
-- **topic:** `state/4` (specified with `--state-topic`)
+- **topic:** `/state/4` (specified with `--state-topic`)
 - **headers:** none
 - **payload:**
   ```json
@@ -26,7 +26,7 @@ At startup, the sensor subscribes for control messages. When a message is receiv
 
 In addition, the sensor will publish its new state (see [Publishing state](#publishing-state) above).
 
-- **topic:** `control/4` (specified with `--control-topic`)
+- **topic:** `/control/4` (specified with `--control-topic`)
 - **headers:** none
 - **payload:**
   ```json
@@ -37,7 +37,7 @@ In addition, the sensor will publish its new state (see [Publishing state](#publ
 
 If the sensor state is `ON`, it will publish readings at random interals. All temperatures are published in Celsius.
 
-- **topic:** `sensors/4` (specified with `--sensors-topic`)
+- **topic:** `/sensors/4` (specified with `--sensors-topic`)
 - **headers:**
   | name | value |
   | ---- | ----: |
@@ -58,9 +58,9 @@ $ mvn clean install
 ```
 $ java -jar target/thing-temperature-sensor-develop-SNAPSHOT.jar \
   -b mqtt.demo.tenefit.cloud \
-  --state-topic state \
-  --sensors-topic sensors \
-  --control-topic control \
-  --id 4 \
-  --row 9
+  --state-topic /state \
+  --sensors-topic /sensors \
+  --control-topic /control \
+  --id 1 \
+  --row 1
 ```
