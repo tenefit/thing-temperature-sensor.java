@@ -1,0 +1,14 @@
+{
+  "confluent.topic.bootstrap.servers": "kafka.tenefit.cloud:9092",
+  "confluent.topic.replication.factor": 1,
+  "connector.class": "io.confluent.connect.mqtt.MqttSourceConnector",
+  "tasks.max": 1,
+  "mqtt.server.uri": "tcp://mosquitto:1883",
+  "mqtt.topics": "/sensors/#",
+  "kafka.topic": "sensors",
+  "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+  "value.converter.schemas.enable": false,
+  "transforms": "insertuuid",
+  "transforms.insertuuid.type": "com.github.cjmatta.kafka.connect.smt.InsertUuid$Key",
+  "transforms.insertuuid.uuid.field.name": "uuid"
+}
