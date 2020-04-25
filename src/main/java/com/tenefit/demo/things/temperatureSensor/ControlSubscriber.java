@@ -38,6 +38,7 @@ public class ControlSubscriber implements Runnable
         String controlTopic,
         String id,
         String row,
+        SensorState state,
         Consumer<SensorState> stateChangeHandler)
     {
         this.client = client;
@@ -46,6 +47,8 @@ public class ControlSubscriber implements Runnable
         this.id = id;
         this.row = row;
         this.stateChangeHandler = stateChangeHandler;
+
+        publishState(state);
     }
 
     @Override
@@ -54,7 +57,7 @@ public class ControlSubscriber implements Runnable
         try (Mqtt5Publishes publishes = client.publishes(MqttGlobalPublishFilter.ALL))
         {
             client.subscribeWith()
-                .topicFilter(String.format("%s/%s", controlTopic, id))
+                .topicFilter(controlTopic)
                 .qos(MqttQos.AT_MOST_ONCE)
                 .send();
             while (true)
@@ -67,19 +70,7 @@ public class ControlSubscriber implements Runnable
                     {
                         SensorState state = SensorState.valueOf(input.getString("state"));
                         stateChangeHandler.accept(state);
-                        String topic = String.format("%s/%s", stateTopic, id);
-                        byte[] output = Json.createObjectBuilder()
-                            .add("id", id)
-                            .add("row", row)
-                            .add("state", state.toString())
-                            .build()
-                            .toString()
-                            .getBytes(UTF_8);
-                        client.publishWith()
-                            .topic(topic)
-                            .payload(output)
-                            .qos(MqttQos.AT_MOST_ONCE)
-                            .send();
+                        publishState(state);
                     }
                 }
             }
@@ -88,5 +79,21 @@ public class ControlSubscriber implements Runnable
         {
             throw new RuntimeException(ex);
         }
+    }
+
+    private void publishState(SensorState state)
+    {
+        byte[] output = Json.createObjectBuilder()
+            .add("id", id)
+            .add("row", row)
+            .add("state", state.toString())
+            .build()
+            .toString()
+            .getBytes(UTF_8);
+        client.publishWith()
+            .topic(stateTopic)
+            .payload(output)
+            .qos(MqttQos.AT_MOST_ONCE)
+            .send();
     }
 }

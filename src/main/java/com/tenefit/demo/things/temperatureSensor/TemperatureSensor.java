@@ -92,7 +92,7 @@ public class TemperatureSensor
     @Once
     @NotBlank
     @NotEmpty
-    private String sensorsTopic;
+    private String sensorsTopicArg;
 
     @Option(
         name = { "--control-topic" },
@@ -130,7 +130,9 @@ public class TemperatureSensor
     @NotEmpty
     private String stateOption;
 
-    private SensorState sensorState;
+    private String sensorsTopic;
+
+    private SensorState state;
 
     private Mqtt5BlockingClient client;
 
@@ -157,26 +159,29 @@ public class TemperatureSensor
 
         client.connect();
 
-        System.out.format("sensor %s connected\n", id);
+        System.out.format("sensor %s started\n", id);
 
         if (stateOption != null)
         {
-            sensorState = SensorState.valueOf(stateOption.toUpperCase());
+            state = SensorState.valueOf(stateOption.toUpperCase());
         }
         else
         {
-            sensorState = SensorState.ON;
+            state = SensorState.ON;
         }
 
         ControlSubscriber controlSubscriber = new ControlSubscriber(
             client,
-            stateTopic,
-            controlTopic,
+            String.format("%s/%s", stateTopic, id),
+            String.format("%s/%s", controlTopic, id),
             id,
             row,
+            state,
             this::handleStateChange);
         Thread stateSubscriberThread = new Thread(controlSubscriber, "stateSubscriber-thread");
         stateSubscriberThread.start();
+
+        sensorsTopic = String.format("%s/%s", sensorsTopicArg, id);
 
         while (true)
         {
@@ -195,7 +200,7 @@ public class TemperatureSensor
 
     private void publishReadingIfNecessary()
     {
-        if (sensorState == SensorState.ON)
+        if (state == SensorState.ON)
         {
             int temp = ThreadLocalRandom.current().nextInt(minTemp, maxTemp + 1);
             String readingMessage = String.format("{\"id\":\"%s\",\"unit\":\"%s\",\"value\":%d,\"row\":\"%s\"}",
@@ -204,7 +209,7 @@ public class TemperatureSensor
                 .add("row", row)
                 .build();
             client.publishWith()
-                .topic(String.format("%s/%s", sensorsTopic, id))
+                .topic(sensorsTopic)
                 .payload(readingMessage.getBytes())
                 .userProperties(userProperties)
                 .qos(MqttQos.AT_MOST_ONCE)
@@ -213,11 +218,11 @@ public class TemperatureSensor
     }
 
     private void handleStateChange(
-        SensorState state)
+        SensorState newState)
     {
-        if (state != sensorState)
+        if (state != newState)
         {
-            sensorState = state;
+            state = newState;
             // Publish immediately to appear responsive rather than waiting until
             // the next message comes along
             publishReadingIfNecessary();
