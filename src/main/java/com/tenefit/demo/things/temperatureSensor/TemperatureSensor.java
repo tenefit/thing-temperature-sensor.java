@@ -68,7 +68,7 @@ public class TemperatureSensor
 
     @Option(
         name = { "--broker", "-b" },
-        description = "Scheme, address, and optional port for broker. Scheme values: mqtt|mqtt+tls. Port default: 1883" +
+        description = "Scheme, address, and optional port for broker. Scheme values: mqtt|mqtt+tls. Port default: 1883|8883" +
             "Example: mqtt+tls://mqtt.example.com")
     @Required
     @Once
