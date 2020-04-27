@@ -150,17 +150,6 @@ public class TemperatureSensor
             return;
         }
 
-        final URI uri = new URI(brokerAddress);
-
-        client = mqtt5ClientBuilder(uri.getScheme())
-            .serverHost(uri.getHost())
-            .identifier(UUID.randomUUID().toString())
-            .buildBlocking();
-
-        client.connect();
-
-        System.out.format("sensor %s started\n", id);
-
         if (stateOption != null)
         {
             state = SensorState.valueOf(stateOption.toUpperCase());
@@ -169,6 +158,19 @@ public class TemperatureSensor
         {
             state = SensorState.ON;
         }
+
+        sensorsTopic = String.format("%s/%s", sensorsTopicArg, id);
+
+        final URI uri = new URI(brokerAddress);
+        client = mqtt5ClientBuilder(Mqtt5Client.builder(), uri.getScheme())
+            .serverHost(uri.getHost())
+            .identifier(UUID.randomUUID().toString())
+            .automaticReconnectWithDefaultConfig()
+            .addConnectedListener(c -> System.out.format("sensor %s connected, row %s, state %s\n", id, row, state))
+            .addDisconnectedListener(c -> System.out.format("sensor %s disconnected, auto-reconnecting...\n", id))
+            .buildBlocking();
+
+        client.connect();
 
         ControlSubscriber controlSubscriber = new ControlSubscriber(
             client,
@@ -181,8 +183,6 @@ public class TemperatureSensor
         Thread stateSubscriberThread = new Thread(controlSubscriber, "stateSubscriber-thread");
         stateSubscriberThread.start();
 
-        sensorsTopic = String.format("%s/%s", sensorsTopicArg, id);
-
         while (true)
         {
             publishReadingIfNecessary();
@@ -191,11 +191,14 @@ public class TemperatureSensor
         }
     }
 
-    private Mqtt5ClientBuilder mqtt5ClientBuilder(String scheme)
+    private <T extends Mqtt5ClientBuilder>  T mqtt5ClientBuilder(T builder, String scheme)
     {
-        return "mqtt+tls".equals(scheme) ?
-            Mqtt5Client.builder().sslWithDefaultConfig() :
-            Mqtt5Client.builder();
+        if ("mqtt+tls".equals(scheme))
+        {
+            builder.sslWithDefaultConfig();
+        }
+
+        return builder;
     }
 
     private void publishReadingIfNecessary()
