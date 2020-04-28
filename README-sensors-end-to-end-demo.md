@@ -90,7 +90,7 @@ Go through these prior to each occasion you wan to run the demo.
 
 1. Open the sensor portal in a browser: https://demo.tenefit.cloud/#sensors
 
-1. Show sensors updating, changing the temperature unit, etc. Note that you will not be able to change the change of the sensor.
+1. Show sensors updating, changing the temperature unit, etc. Note that you will not be able to change the change the state of the sensor.
 
 1. Kill the sensors:
 
