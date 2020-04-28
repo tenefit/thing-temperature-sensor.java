@@ -78,3 +78,7 @@ To kill all sensors:
 ```
 $ scripts/killall.sh
 ```
+
+## Sensors end-to-end demo
+
+See [README-sensors-end-to-end-demo](README-sensors-end-to-end-demo.md) for the instructions to run the full sensors demo end-to-end.
