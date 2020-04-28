@@ -55,12 +55,30 @@ $ mvn clean install
 
 ## Run
 
+To run a single sensor:
+
 ```
 $ java -jar target/thing-temperature-sensor-develop-SNAPSHOT.jar \
-  -b mqtt.demo.tenefit.cloud \
+  -b mqtt+tls://mqtt.demo.tenefit.cloud \
   --state-topic /state \
   --sensors-topic /sensors \
   --control-topic /control \
   --id 1 \
   --row 1
 ```
+
+To run all sensors:
+
+```
+$ scripts/runall.sh mqtt+tls://mqtt.demo.tenefit.cloud
+```
+
+To kill all sensors:
+
+```
+$ scripts/killall.sh
+```
+
+## Sensors end-to-end demo
+
+See [README-sensors-end-to-end-demo](README-sensors-end-to-end-demo.md) for the instructions to run the full sensors demo end-to-end.

@@ -92,7 +92,7 @@ public class TemperatureSensor
     @Once
     @NotBlank
     @NotEmpty
-    private String sensorsTopic;
+    private String sensorsTopicArg;
 
     @Option(
         name = { "--control-topic" },
@@ -130,7 +130,9 @@ public class TemperatureSensor
     @NotEmpty
     private String stateOption;
 
-    private SensorState sensorState;
+    private String sensorsTopic;
+
+    private SensorState state;
 
     private Mqtt5BlockingClient client;
 
@@ -148,32 +150,35 @@ public class TemperatureSensor
             return;
         }
 
-        final URI uri = new URI(brokerAddress);
+        if (stateOption != null)
+        {
+            state = SensorState.valueOf(stateOption.toUpperCase());
+        }
+        else
+        {
+            state = SensorState.ON;
+        }
 
-        client = mqtt5ClientBuilder(uri.getScheme())
+        sensorsTopic = String.format("%s/%s", sensorsTopicArg, id);
+
+        final URI uri = new URI(brokerAddress);
+        client = mqtt5ClientBuilder(Mqtt5Client.builder(), uri.getScheme())
             .serverHost(uri.getHost())
             .identifier(UUID.randomUUID().toString())
+            .automaticReconnectWithDefaultConfig()
+            .addConnectedListener(c -> System.out.format("sensor %s connected, row %s, state %s\n", id, row, state))
+            .addDisconnectedListener(c -> System.out.format("sensor %s disconnected, auto-reconnecting...\n", id))
             .buildBlocking();
 
         client.connect();
 
-        System.out.format("sensor %s connected\n", id);
-
-        if (stateOption != null)
-        {
-            sensorState = SensorState.valueOf(stateOption.toUpperCase());
-        }
-        else
-        {
-            sensorState = SensorState.ON;
-        }
-
         ControlSubscriber controlSubscriber = new ControlSubscriber(
             client,
-            stateTopic,
-            controlTopic,
+            String.format("%s/%s", stateTopic, id),
+            String.format("%s/%s", controlTopic, id),
             id,
             row,
+            state,
             this::handleStateChange);
         Thread stateSubscriberThread = new Thread(controlSubscriber, "stateSubscriber-thread");
         stateSubscriberThread.start();
@@ -186,16 +191,19 @@ public class TemperatureSensor
         }
     }
 
-    private Mqtt5ClientBuilder mqtt5ClientBuilder(String scheme)
+    private <T extends Mqtt5ClientBuilder>  T mqtt5ClientBuilder(T builder, String scheme)
     {
-        return "mqtt+tls".equals(scheme) ?
-            Mqtt5Client.builder().sslWithDefaultConfig() :
-            Mqtt5Client.builder();
+        if ("mqtt+tls".equals(scheme))
+        {
+            builder.sslWithDefaultConfig();
+        }
+
+        return builder;
     }
 
     private void publishReadingIfNecessary()
     {
-        if (sensorState == SensorState.ON)
+        if (state == SensorState.ON)
         {
             int temp = ThreadLocalRandom.current().nextInt(minTemp, maxTemp + 1);
             String readingMessage = String.format("{\"id\":\"%s\",\"unit\":\"%s\",\"value\":%d,\"row\":\"%s\"}",
@@ -204,7 +212,7 @@ public class TemperatureSensor
                 .add("row", row)
                 .build();
             client.publishWith()
-                .topic(String.format("%s/%s", sensorsTopic, id))
+                .topic(sensorsTopic)
                 .payload(readingMessage.getBytes())
                 .userProperties(userProperties)
                 .qos(MqttQos.AT_MOST_ONCE)
@@ -213,11 +221,11 @@ public class TemperatureSensor
     }
 
     private void handleStateChange(
-        SensorState state)
+        SensorState newState)
     {
-        if (state != sensorState)
+        if (state != newState)
         {
-            sensorState = state;
+            state = newState;
             // Publish immediately to appear responsive rather than waiting until
             // the next message comes along
             publishReadingIfNecessary();

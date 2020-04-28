@@ -1,0 +1,21 @@
+{
+  "confluent.topic.bootstrap.servers": "kafka.tenefit.cloud:9092",
+  "confluent.topic.replication.factor": 1,
+  "connector.class": "io.confluent.connect.mqtt.MqttSourceConnector",
+  "tasks.max": 1,
+  "mqtt.server.uri": "tcp://mosquitto:1883",
+  "mqtt.topics": "/sensors/#",
+  "kafka.topic": "sensors",
+  "converter.encoding": "UTF-8",
+  "value.converter.schemas.enable": false,
+  "transforms": "ConvertValue,RegexKey,ExtractField,ValueToHeader",
+  "transforms.ConvertValue.type": "com.tenefit.kafka.connect.transforms.Convert$Value",
+  "transforms.ConvertValue.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "transforms.RegexKey.type": "com.tenefit.kafka.connect.transforms.RegexKey",
+  "transforms.RegexKey.regex": "/sensors/(?<id>[^/]+)",
+  "transforms.ExtractField.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+  "transforms.ExtractField.field": "id",
+  "transforms.ValueToHeader.type": "com.tenefit.kafka.connect.transforms.ValueToHeader",
+  "transforms.ValueToHeader.field": "row",
+  "transforms.ValueToHeader.header": "row"
+}

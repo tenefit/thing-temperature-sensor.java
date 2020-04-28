@@ -28,16 +28,17 @@ services:
       CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
       CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_PLUGIN_PATH: /usr/share/java,/etc/kafka-connect/jars
       CONNECT_CONFLUENT_TOPIC_REPLICATION_FACTOR: 1
+      CONNECT_PLUGIN_PATH: /usr/share/java,/etc/kafka-connect/plugins
+      CONNECT_LOG4J_ROOT_LOGLEVEL: WARN
     volumes:
-      - ./confluentinc-kafka-connect-mqtt-1.2.3/lib:/etc/kafka-connect/jars
-      - ./plugins:/usr/local/share/kafka/plugins
+      - ./plugins:/etc/kafka-connect/plugins
     depends_on:
       - mosquitto
     networks:
