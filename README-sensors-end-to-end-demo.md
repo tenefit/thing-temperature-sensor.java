@@ -14,6 +14,8 @@ This README contains instructions for running the full sensors demo end-to-end.
 
 - Docker and Docker Compose
 
+- Java 1.8 or higher
+
 ## One-time setup
 
 The steps in this section only need to be done once to setup and install the necessary components on your machine.
