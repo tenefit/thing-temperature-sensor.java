@@ -22,7 +22,7 @@ The steps in this section only need to be done once to setup and install the nec
 
 1. Clone or fork this repo.
 
-1. You need to build the MQTT sensor IoT thing. In a terminal window and change to the top level directory of this repo. You'll know you're in the right directory if you see the `pom.xml` file:
+1. You need to build the MQTT sensor IoT thing. In a terminal window, change to the top level directory of this repo. You'll know you're in the right directory if you see the `pom.xml` file:
 
    ```
    $ ls pom.xml
@@ -96,7 +96,7 @@ Go through these steps prior to each occasion you want to run the demo.
    $ scripts/killall.sh
    ```
 
-1. Now restart the sensors, but this time connected to tenefit.cloud:
+1. Now restart the sensors, but this time connecting to tenefit.cloud:
 
    ```
    $ scripts/runall.sh mqtt+tls://mqtt.demo.tenefit.cloud
