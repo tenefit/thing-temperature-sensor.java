@@ -44,11 +44,6 @@ startSensor 8 4
 startSensor 9 4 OFF
 startSensor 10 4
 
-echo "echo 'killing: ${PIDS}'" >${DIR}/killall.sh
-echo "kill -9 ${PIDS}" >>${DIR}/killall.sh
-echo "echo 'done'" >>${DIR}/killall.sh
-chmod oug+x ${DIR}/killall.sh
-
 echo ""
 echo "To see sensor processes:"
 echo ""
