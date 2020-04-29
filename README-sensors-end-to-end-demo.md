@@ -22,7 +22,12 @@ The steps in this section only need to be done once to setup and install the nec
 
 1. Clone or fork this repo.
 
-1. You need to build the MQTT sensor IoT thing. Open a new terminal window and to the top level directory of this repo. You'll know you're in the right directory if you see the `pom.xml` file.
+1. You need to build the MQTT sensor IoT thing. In a terminal window and change to the top level directory of this repo. You'll know you're in the right directory if you see the `pom.xml` file:
+
+   ```
+   $ ls pom.xml
+   pom.xml
+   ```
 
 1. Run the following command to build the Java-based MQTT sensor application using Maven:
 
@@ -34,7 +39,7 @@ The steps in this section only need to be done once to setup and install the nec
 
 ## Pre-demo setup
 
-Go through these prior to each occasion you wan to run the demo.
+Go through these steps prior to each occasion you want to run the demo.
 
 1. Open a terminal window and go to the top-level directory from this repo. To check that you're in the right directory, make sure you see the `docker-compose.yml` file:
 
@@ -46,32 +51,29 @@ Go through these prior to each occasion you wan to run the demo.
 1. Start the Docker Compose suite that will run the Eclipse Mosquitto MQTT broker and Apache Kafka Connect:
 
    ```
-   $ docker-compose up -d
+   $ docker-compose up
    ```
 
-   The `-d` argument will run the Docker Compose suite in the background (daemon mode). Later when you want to shut it down, you can run:
+   You'll need to wait between one and two minutes for everything to start. It's ready when you generally see the logging stop scrolling.
 
-   To see the Docker Compose logs while it's starting, run:
-
-   ```
-   $ docker-compose logs --follow
-   ```
-
-   You'll need to wait between one and two minutes for everything to start. It's ready when you generally see the logging stop scrolling and say `INFO Finished starting connectors and tasks`, for example:
+   Often, the following lines indicate that the Docker containers are ready:
 
    ```
-   kafka-connect    | [2020-04-23 17:40:27,971] INFO Finished starting connectors and tasks (org.apache.kafka.connect.runtime.distributed.DistributedHerder)
+   mosquitto | 1588138801: New connection from 10.8.8.3 on port 1883.
+   mosquitto | 1588138801: New connection from 10.8.8.3 on port 1883.
+   mosquitto | 1588138801: New client connected from 10.8.8.3 as paho7385846549894 (p2, c1, k60).
+   mosquitto | 1588138801: New client connected from 10.8.8.3 as paho7385846530194 (p2, c1, k60).
    ```
 
-   Note that some logging may continue after that line, so it may not necessarily be on the very last line.
+## Running the demo
 
-1. Once it's built, start the MQTT sensors:
+1. Start the MQTT sensors:
 
    ```
    $ scripts/runall.sh mqtt://localhost
    ```
 
-   That will start 10 sensors in the background. A moment later you should see:
+   That will start 10 sensors in the background, connected to the Mosquitto MQTT broker running in Docker. A moment later you should see:
 
    ```
    sensor 1 connected
@@ -84,15 +86,9 @@ Go through these prior to each occasion you wan to run the demo.
 
 1. You should see the sensors updating.
 
-1. Use the lower-right corner to change the temperature unit and verify it works.
+   Use the lower-right corner to change the temperature unit and verify it works.
 
-1. When everything is working, you're ready to run the demo.
-
-## Running the demo
-
-1. Open the sensor portal in a browser: https://demo.tenefit.cloud/#sensors
-
-1. Show sensors updating, changing the temperature unit, etc. Note that you will not be able to change the state of the sensor.
+   Note that you cannot update the state yet, when using the sensors running against the Docker container.
 
 1. Kill the sensors:
 
@@ -100,7 +96,7 @@ Go through these prior to each occasion you wan to run the demo.
    $ scripts/killall.sh
    ```
 
-1. Now restart the sensors, but this time going through tenefit.cloud:
+1. Now restart the sensors, but this time connected to tenefit.cloud:
 
    ```
    $ scripts/runall.sh mqtt+tls://mqtt.demo.tenefit.cloud
@@ -127,10 +123,6 @@ Go through these prior to each occasion you wan to run the demo.
    $ scripts/killall.sh
    ```
 
-1. Stop the Docker Compose suite:
+1. Stop the Docker Compose suite by pressing `Ctrl-C`.
 
-   ```
-   $ docker-compose down
-   ```
-
-1. Quit Docker, if you no longer need it.
+1. Shutdown Docker itself, if you no longer need it.

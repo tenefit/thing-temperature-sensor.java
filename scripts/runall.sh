@@ -34,20 +34,15 @@ else
 fi
 
 startSensor 1 1
-startSensor 2 1 OFF
+startSensor 2 1 ON
 startSensor 3 2
-startSensor 4 2 OFF
+startSensor 4 2 ON
 startSensor 5 3
 startSensor 6 3
 startSensor 7 3
 startSensor 8 4
-startSensor 9 4 OFF
+startSensor 9 4 ON
 startSensor 10 4
-
-echo "echo 'killing: ${PIDS}'" >${DIR}/killall.sh
-echo "kill -9 ${PIDS}" >>${DIR}/killall.sh
-echo "echo 'done'" >>${DIR}/killall.sh
-chmod oug+x ${DIR}/killall.sh
 
 echo ""
 echo "To see sensor processes:"
