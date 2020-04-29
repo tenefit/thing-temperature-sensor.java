@@ -34,14 +34,14 @@ else
 fi
 
 startSensor 1 1
-startSensor 2 1 ON
+startSensor 2 1 OFF
 startSensor 3 2
-startSensor 4 2 ON
+startSensor 4 2 OFF
 startSensor 5 3
 startSensor 6 3
 startSensor 7 3
 startSensor 8 4
-startSensor 9 4 ON
+startSensor 9 4 OFF
 startSensor 10 4
 
 echo ""
