@@ -63,11 +63,9 @@ public class ControlSubscriber implements Runnable
             while (true)
             {
                 Mqtt5Publish inputMessage = publishes.receive();
-                // System.out.format("sensor %s receiving a control message\n", id);
                 try (JsonReader inputJson = Json.createReader(new StringReader(new String(inputMessage.getPayloadAsBytes()))))
                 {
                     JsonObject input = inputJson.readObject();
-                    // System.out.format("sensor %s input=%s\n", id, input);
                     if (input.containsKey("state"))
                     {
                         SensorState state = SensorState.valueOf(input.getString("state"));
