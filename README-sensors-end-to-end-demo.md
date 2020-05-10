@@ -22,9 +22,9 @@ The optional sections are marked, so if you just want to see the portion of the 
 
 - Java 1.8 or higher
 
-Optional for Kafka Connect:
-
 - A Kafka broker or Kafka broker cluster
+
+Optional for Kafka Connect:
 
 - Docker and Docker Compose
 
