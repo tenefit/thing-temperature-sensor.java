@@ -19,7 +19,7 @@ services:
     ports:
       - "8083:8083"
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: kafka.tenefit.cloud:9092
+      CONNECT_BOOTSTRAP_SERVERS: kafka.example.com:9092
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: compose-connect-group

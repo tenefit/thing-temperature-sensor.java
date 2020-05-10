@@ -27,7 +27,7 @@ startSensor() {
 }
 
 if [ -z ${1+x} ]; then
-  echo "ERROR: You need to specify the address. For example: mqtt+tls://mqtt.example.com"
+  echo "ERROR: You need to specify the address. For example: mqtts://mqtt.example.com"
   exit 1
 else
   ADDRESS=${1}

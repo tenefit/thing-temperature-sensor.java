@@ -1,6 +1,46 @@
 # thing-temperature-sensor.java
 
-A single sensor that will publish temperature readings at random intervals.
+A sensor that simulates an IoT device which publishes temperature readings at random intervals.
+
+> ### Sensors end-to-end demo
+>
+> See [README-sensors-end-to-end-demo](README-sensors-end-to-end-demo.md) for the instructions to run the full sensors demo end-to-end.
+
+The remainder of this README describes the functionality of a single sensor.
+
+## Build
+
+```
+$ mvn clean install
+```
+
+## Run
+
+To run a single sensor (replace `mqtt.demo.tenefit.cloud` with the appropriate domain):
+
+```
+$ java -jar target/thing-temperature-sensor-develop-SNAPSHOT.jar \
+  -b mqtts://mqtt.demo.tenefit.cloud \
+  --state-topic /state \
+  --sensors-topic /sensors \
+  --control-topic /control \
+  --id 1 \
+  --row 1
+```
+
+A convenient script is available that will launch 10 sensors in the background (replace `mqtt.demo.tenefit.cloud` with the appropriate domain):
+
+```
+$ scripts/runall.sh mqtts://mqtt.demo.tenefit.cloud
+```
+
+To kill all sensors:
+
+```
+$ scripts/killall.sh
+```
+
+## Sensor details
 
 At start up, the sensor will publish it's state. It will also listen for control messages that modify the sensor's state. After any state change, the sensor will publish it's new state.
 
@@ -22,9 +62,7 @@ At startup, and anytime the state is changed, the sensor will publish the state.
 
 ### Receiving control messages
 
-At startup, the sensor subscribes for control messages. When a message is received, the sensor's state is updated. If it is set to `OFF`, it will stop publishing readings. If it is set to `ON`, it will resume publishing readings.
-
-In addition, the sensor will publish its new state (see [Publishing state](#publishing-state) above).
+At startup, the sensor subscribes for control messages. When a message is received, the sensor's state is updated. If it is set to `OFF`, it will stop publishing readings. If it is set to `ON`, it will resume publishing readings. In addition, the sensor will publish its new state (see [Publishing state](#publishing-state) above).
 
 - **topic:** `/control/4` (specified with `--control-topic`)
 - **headers:** none
@@ -47,38 +85,10 @@ If the sensor state is `ON`, it will publish readings at random interals. All te
   { "id": "4", "unit": "C", "value": "100" }
   ```
 
-## Build
-
-```
-$ mvn clean install
-```
-
-## Run
-
-To run a single sensor:
-
-```
-$ java -jar target/thing-temperature-sensor-develop-SNAPSHOT.jar \
-  -b mqtt+tls://mqtt.demo.tenefit.cloud \
-  --state-topic /state \
-  --sensors-topic /sensors \
-  --control-topic /control \
-  --id 1 \
-  --row 1
-```
-
-To run all sensors:
-
-```
-$ scripts/runall.sh mqtt+tls://mqtt.demo.tenefit.cloud
-```
-
-To kill all sensors:
-
-```
-$ scripts/killall.sh
-```
-
 ## Sensors end-to-end demo
 
 See [README-sensors-end-to-end-demo](README-sensors-end-to-end-demo.md) for the instructions to run the full sensors demo end-to-end.
+
+## TODO
+
+- TODO Add a timeout when starting if there is no control message, and default to ON
