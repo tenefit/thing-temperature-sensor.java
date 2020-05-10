@@ -1,5 +1,5 @@
 {
-  "confluent.topic.bootstrap.servers": "kafka.tenefit.cloud:9092",
+  "confluent.topic.bootstrap.servers": "kafka.example.com:9092",
   "confluent.topic.replication.factor": 1,
   "connector.class": "io.confluent.connect.mqtt.MqttSourceConnector",
   "tasks.max": 1,
