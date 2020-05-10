@@ -68,8 +68,8 @@ public class TemperatureSensor
 
     @Option(
         name = { "--broker", "-b" },
-        description = "Scheme, address, and optional port for broker. Scheme values: mqtt|mqtt+tls. Port default: 1883|8883" +
-            "Example: mqtt+tls://mqtt.example.com")
+        description = "Scheme, address, and optional port for broker. Scheme values: mqtt|mqtts. Port default: 1883|8883" +
+            "Example: mqtts://mqtt.example.com")
     @Required
     @Once
     @NotBlank
@@ -193,11 +193,10 @@ public class TemperatureSensor
 
     private <T extends Mqtt5ClientBuilder>  T mqtt5ClientBuilder(T builder, String scheme)
     {
-        if ("mqtt+tls".equals(scheme))
+        if ("mqtts".equals(scheme))
         {
             builder.sslWithDefaultConfig();
         }
-
         return builder;
     }
 
