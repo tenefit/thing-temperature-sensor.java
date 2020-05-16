@@ -29,7 +29,7 @@
 
   <repositories>
     <repository>
-      <id>kaazing.private</id>
+      <id>maven.tenefit.com</id>
       <url>https://repository.kaazing.us/repository/mvn-private-releases/</url>
     </repository>
   </repositories>
