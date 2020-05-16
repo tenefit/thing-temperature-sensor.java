@@ -1,0 +1,14 @@
+dist: bionic
+language: java
+before_install:
+- rm ~/.m2/settings.xml
+jdk:
+- openjdk11
+install: ./mvnw -v
+script: ./mvnw -B -nsu verify
+cache:
+  directories:
+  - "$HOME/.m2"
+branches:
+  except:
+  - "/^release\\/.*$/"
