@@ -27,7 +27,7 @@ startSensor() {
 }
 
 if [ -z ${1+x} ]; then
-  echo "ERROR: You need to specify the address. For example: mqtt+tls://mqtt.example.com"
+  echo "ERROR: You need to specify the address. For example: mqtts://mqtt.example.com"
   exit 1
 else
   ADDRESS=${1}
@@ -43,11 +43,6 @@ startSensor 7 3
 startSensor 8 4
 startSensor 9 4 OFF
 startSensor 10 4
-
-echo "echo 'killing: ${PIDS}'" >${DIR}/killall.sh
-echo "kill -9 ${PIDS}" >>${DIR}/killall.sh
-echo "echo 'done'" >>${DIR}/killall.sh
-chmod oug+x ${DIR}/killall.sh
 
 echo ""
 echo "To see sensor processes:"
