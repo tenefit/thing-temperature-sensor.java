@@ -2,7 +2,7 @@
   <servers>
     <server>
       <id>maven.tenefit.com</id>
-      <username>travis</username>
+      <username>${env.TENEFIT_USERNAME}</username>
       <password>${env.TENEFIT_PASSWORD}</password>
     </server>
   </servers>
