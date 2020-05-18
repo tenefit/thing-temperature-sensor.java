@@ -30,7 +30,7 @@
   <repositories>
     <repository>
       <id>maven.tenefit.com</id>
-      <url>https://maven.pkg.github.com/tenefit/</url>
+      <url>https://maven.pkg.github.com/tenefit/packages/</url>
     </repository>
   </repositories>
 
