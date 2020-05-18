@@ -151,14 +151,14 @@
       <id>release</id>
 
       <distributionManagement>
-        <downloadUrl>https://maven.pkg.github.com/tenefit/</downloadUrl>
+        <downloadUrl>https://maven.pkg.github.com/tenefit/build-template.java/</downloadUrl>
         <repository>
           <id>maven.tenefit.com</id>
-          <url>https://maven.pkg.github.com/tenefit/</url>
+          <url>https://maven.pkg.github.com/tenefit/build-template.java/</url>
         </repository>
         <snapshotRepository>
           <id>maven.tenefit.com</id>
-          <url>https://maven.pkg.github.com/tenefit/</url>
+          <url>https://maven.pkg.github.com/tenefit/build-template.java/</url>
         </snapshotRepository>
       </distributionManagement>
 
