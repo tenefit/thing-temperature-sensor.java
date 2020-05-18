@@ -1,0 +1,9 @@
+<settings>
+  <servers>
+    <server>
+      <id>maven.tenefit.com</id>
+      <username>travis</username>
+      <password>${env.TENEFIT_PASSWORD}</password>
+    </server>
+  </servers>
+</settings>

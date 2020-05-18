@@ -20,3 +20,13 @@ $ git add pom.xml
 $ git commit
 $ git push origin develop
 ```
+Travis CI requires environment entry `TENEFIT_PASSWORD=XXXXXXXXXXXXXXXXXXXXXXXX`.
+```bash
+$ travis encrypt --add env.global
+TENEFIT_PASSWORD=XXXXXXXXXXXXXXXXXXXXXXXX
+^D
+$ git add .travis.yml
+$ git commit -m "Access Tenefit Maven repository"
+$ git push origin develop
+```
+Verify the Travis CI build can resolve dependencies via Tenefit Maven repository.
