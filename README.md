@@ -22,10 +22,8 @@ $ git push origin develop
 ```
 Travis CI requires environment entries for `TENEFIT_USERNAME` and `TENEFIT_PASSWORD` for use in `.travis/maven-settings.xml`.
 ```bash
-$ travis encrypt --add env.global
-TENEFIT_USERNAME=[build-user]
-TENEFIT_PASSWORD=[access-token]
-^D
+$ travis encrypt "TENEFIT_USERNAME=[build-user]" --add env.global
+$ travis encrypt "TENEFIT_PASSWORD=[access-token]" --add env.global
 $ git add .travis.yml
 $ git commit -m "Access Tenefit Maven repository"
 $ git push origin develop
