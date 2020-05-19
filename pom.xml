@@ -32,8 +32,8 @@
 
   <repositories>
     <repository>
-      <id>kaazing.private</id>
-      <url>https://repository.kaazing.us/repository/mvn-private-releases/</url>
+      <id>maven.tenefit.com</id>
+      <url>https://maven.pkg.github.com/tenefit/packages/</url>
     </repository>
   </repositories>
 
@@ -143,7 +143,6 @@
         <version>0.8.2</version>
         <configuration>
           <excludes>
-            <exclude>com/kaazing/specification/kafka_sse/internal/types/**/*.class</exclude>
           </excludes>
           <rules>
             <rule>
@@ -230,14 +229,14 @@
       <id>release</id>
 
       <distributionManagement>
-        <downloadUrl>https://repository.kaazing.us/repository/maven-private/</downloadUrl>
+        <downloadUrl>https://maven.pkg.github.com/tenefit/thing-temperature-sensor.java/</downloadUrl>
         <repository>
-          <id>kaazing.private</id>
-          <url>https://repository.kaazing.us/repository/mvn-private-releases/</url>
+          <id>maven.tenefit.com</id>
+          <url>https://maven.pkg.github.com/tenefit/thing-temperature-sensor.java/</url>
         </repository>
         <snapshotRepository>
-          <id>kaazing.private</id>
-          <url>https://repository.kaazing.us/repository/mvn-private-snapshots/</url>
+          <id>maven.tenefit.com</id>
+          <url>https://maven.pkg.github.com/tenefit/thing-temperature-sensor.java/</url>
         </snapshotRepository>
       </distributionManagement>
 

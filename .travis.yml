@@ -4,8 +4,8 @@ before_install:
 - rm ~/.m2/settings.xml
 jdk:
 - openjdk11
-install: ./mvnw -v
-script: ./mvnw -B -nsu verify
+install: ./mvnw -s "${TRAVIS_BUILD_DIR}/.travis/maven-settings.xml" -v
+script: ./mvnw -s "${TRAVIS_BUILD_DIR}/.travis/maven-settings.xml" -B -nsu verify
 cache:
   directories:
   - "$HOME/.m2"
