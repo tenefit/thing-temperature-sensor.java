@@ -124,11 +124,41 @@ The steps in this section only need to be done once to setup and install the nec
 
 The remaining steps in this section are optional for using Kafka Connect:
 
-1. Using an editor, open `docker-compose.yml`. Change `kafka.example.com` to the address of your Kafka broker or cluster. Save the file.
+1. Using an editor, open `docker-compose.yml`.
 
-1. Using an editor, open `connect-mqtt-sensors.json`. Change `kafka.example.com` to the address of your Kafka broker or cluster. Save the file.
+   - Change `kafka.example.com` to the address of your Kafka broker or cluster.
+   - If your Kafka requires the client to use a keystore or truststore, remove the comments from the environment variables prefix with `CONNECT_SECURITY_*`, `CONNECT_SSL_*`, `CONNECT_PRODUCER_SECURITY_*`, and `CONNECT_PRODUCER_SSL_*`, and set the appropriate values.
+   - Save the file.
 
-1. Using an editor, open `connect-mqtt-state.json`. Change `kafka.example.com` to the address of your Kafka broker or cluster. Save the file.
+1. Using an editor, open `connect-mqtt-sensors.json`.
+
+   - Change `kafka.example.com` to the address of your Kafka broker or cluster.
+   - If your Kafka requires the client to use a keystore or truststore, change `confluent.topic.security.protocol` from `PLAINTEXT` to `SSL` and provide the appropriate SSL settings, for example:
+
+     ```json
+     "confluent.topic.ssl.truststore.location": "/var/private/ssl/truststore.jks",
+     "confluent.topic.ssl.truststore.password": "change-this-password",
+     "confluent.topic.ssl.keystore.location": "/var/private/ssl/keystore.jks",
+     "confluent.topic.ssl.keystore.password": "change-this-password",
+     "confluent.topic.ssl.endpoint.identification.algorithm": "",
+     ```
+
+   - Save the file.
+
+1. Using an editor, open `connect-mqtt-state.json`.
+
+   - Change `kafka.example.com` to the address of your Kafka broker or cluster.
+   - If your Kafka requires the client to use a keystore or truststore, change `confluent.topic.security.protocol` from `PLAINTEXT` to `SSL` and provide the appropriate SSL settings, for example:
+
+     ```json
+     "confluent.topic.ssl.truststore.location": "/var/private/ssl/truststore.jks",
+     "confluent.topic.ssl.truststore.password": "change-this-password",
+     "confluent.topic.ssl.keystore.location": "/var/private/ssl/keystore.jks",
+     "confluent.topic.ssl.keystore.password": "change-this-password",
+     "confluent.topic.ssl.endpoint.identification.algorithm": "",
+     ```
+
+   - Save the file.
 
 1. In the same directory, start the Docker Compose suite that will run the Eclipse Mosquitto MQTT broker and Apache Kafka Connect:
 

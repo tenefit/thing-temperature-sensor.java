@@ -20,7 +20,7 @@ services:
       - "8083:8083"
     environment:
       CONNECT_BOOTSTRAP_SERVERS: kafka.example.com:9092
-      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: compose-connect-group
       CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
@@ -34,11 +34,25 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_CONFLUENT_TOPIC_REPLICATION_FACTOR: 1
+      CONNECT_CONFLUENT_TOPIC_REPLICATION_FACTOR: 2
       CONNECT_PLUGIN_PATH: /usr/share/java,/etc/kafka-connect/plugins
       CONNECT_LOG4J_ROOT_LOGLEVEL: WARN
+      # CONNECT_SECURITY_PROTOCOL: SSL
+      # CONNECT_SSL_TRUSTSTORE_LOCATION: /var/private/ssl/truststore.jks
+      # CONNECT_SSL_TRUSTSTORE_PASSWORD: change-this-password
+      # CONNECT_SSL_KEYSTORE_LOCATION: /var/private/ssl/keystore.jks
+      # CONNECT_SSL_KEYSTORE_PASSWORD: change-this-password
+      # CONNECT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      # CONNECT_PRODUCER_SECURITY_PROTOCOL: SSL
+      # CONNECT_PRODUCER_SSL_TRUSTSTORE_LOCATION: /var/private/ssl/truststore.jks
+      # CONNECT_PRODUCER_SSL_TRUSTSTORE_PASSWORD: change-this-password
+      # CONNECT_PRODUCER_SSL_KEYSTORE_LOCATION: /var/private/ssl/keystore.jks
+      # CONNECT_PRODUCER_SSL_KEYSTORE_PASSWORD: change-this-password
+      # CONNECT_PRODUCER_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
     volumes:
       - ./plugins:/etc/kafka-connect/plugins
+      # - /local/path/to/truststore.jks:/var/private/ssl/truststore.jks
+      # - /local/path/to/keystore.jks:/var/private/ssl/keystore.jks
     depends_on:
       - mosquitto
     networks:
