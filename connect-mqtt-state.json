@@ -1,11 +1,6 @@
 {
   "confluent.topic.bootstrap.servers": "kafka.example.com:9092",
-  "confluent.topic.security.protocol": "SSL",
-  "confluent.topic.ssl.truststore.location": "/var/private/ssl/truststore.db",
-  "confluent.topic.ssl.truststore.password": "change-this-password",
-  "confluent.topic.ssl.keystore.location": "/var/private/ssl/keystore.db",
-  "confluent.topic.ssl.keystore.password": "change-this-password",
-  "confluent.topic.ssl.endpoint.identification.algorithm": "",
+  "confluent.topic.security.protocol": "PLAINTEXT",
   "confluent.topic.replication.factor": 2,
   "connector.class": "io.confluent.connect.mqtt.MqttSourceConnector",
   "tasks.max": 1,

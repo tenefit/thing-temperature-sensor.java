@@ -38,21 +38,21 @@ services:
       CONNECT_PLUGIN_PATH: /usr/share/java,/etc/kafka-connect/plugins
       CONNECT_LOG4J_ROOT_LOGLEVEL: WARN
       # CONNECT_SECURITY_PROTOCOL: SSL
-      # CONNECT_SSL_TRUSTSTORE_LOCATION: /var/private/ssl/truststore.db
+      # CONNECT_SSL_TRUSTSTORE_LOCATION: /var/private/ssl/truststore.jks
       # CONNECT_SSL_TRUSTSTORE_PASSWORD: change-this-password
-      # CONNECT_SSL_KEYSTORE_LOCATION: /var/private/ssl/keystore.db
+      # CONNECT_SSL_KEYSTORE_LOCATION: /var/private/ssl/keystore.jks
       # CONNECT_SSL_KEYSTORE_PASSWORD: change-this-password
       # CONNECT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
       # CONNECT_PRODUCER_SECURITY_PROTOCOL: SSL
-      # CONNECT_PRODUCER_SSL_TRUSTSTORE_LOCATION: /var/private/ssl/truststore.db
+      # CONNECT_PRODUCER_SSL_TRUSTSTORE_LOCATION: /var/private/ssl/truststore.jks
       # CONNECT_PRODUCER_SSL_TRUSTSTORE_PASSWORD: change-this-password
-      # CONNECT_PRODUCER_SSL_KEYSTORE_LOCATION: /var/private/ssl/keystore.db
+      # CONNECT_PRODUCER_SSL_KEYSTORE_LOCATION: /var/private/ssl/keystore.jks
       # CONNECT_PRODUCER_SSL_KEYSTORE_PASSWORD: change-this-password
       # CONNECT_PRODUCER_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
     volumes:
       - ./plugins:/etc/kafka-connect/plugins
-      # - /local/path/to/truststore.db:/var/private/ssl/truststore.db
-      # - /local/path/to/keystore.db:/var/private/ssl/keystore.db
+      # - /local/path/to/truststore.jks:/var/private/ssl/truststore.jks
+      # - /local/path/to/keystore.jks:/var/private/ssl/keystore.jks
     depends_on:
       - mosquitto
     networks:
