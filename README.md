@@ -88,7 +88,3 @@ If the sensor state is `ON`, it will publish readings at random interals. All te
 ## Sensors end-to-end demo
 
 See [README-sensors-end-to-end-demo](README-sensors-end-to-end-demo.md) for the instructions to run the full sensors demo end-to-end.
-
-## TODO
-
-- TODO Add a timeout when starting if there is no control message, and default to ON
