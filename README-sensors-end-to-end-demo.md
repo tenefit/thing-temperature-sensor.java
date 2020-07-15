@@ -124,6 +124,8 @@ The steps in this section only need to be done once to setup and install the nec
 
 The remaining steps in this section are optional for using Kafka Connect:
 
+1. Kafka Connect will create some topics in your Kafka cluster, and some of those topics will have a replication value of 2. If your Kafka cluster is configured with `min.insync.replicas` having a value greater than 1, then ensure you have sufficient number of broker nodes in your cluster, or set `min.insync.replicas=1`.
+
 1. Using an editor, open `docker-compose.yml`.
 
    - Change `kafka.example.com` to the address of your Kafka broker or cluster.
