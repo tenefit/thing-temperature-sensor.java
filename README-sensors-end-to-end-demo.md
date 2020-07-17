@@ -43,7 +43,11 @@ The steps in this section only need to be done once to setup and install the nec
    | `state`              | `compact` or `compact,delete` |
    | `control`            | `delete`                      |
 
-   Note that the `sensors`, `readings`, and `state` topics are log compacted.
+   Note:
+
+   - The `sensors`, `readings`, and `state` topics are log compacted.
+
+   - As usual, when manually creating topics in Kafka, ensure that the topic's replication factor is greater than or equal to the broker's `min.insync.replicas` setting.
 
    The remainder of this document will use the address `kafka.example.com` for your Kafka.
 
