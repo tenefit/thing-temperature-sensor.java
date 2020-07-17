@@ -43,7 +43,11 @@ The steps in this section only need to be done once to setup and install the nec
    | `state`              | `compact` or `compact,delete` |
    | `control`            | `delete`                      |
 
-   Note that the `sensors`, `readings`, and `state` topics are log compacted.
+   Note:
+
+   - The `sensors`, `readings`, and `state` topics are log compacted.
+
+   - As usual, when manually creating topics in Kafka, ensure that the topic's replication factor is greater than or equal to the broker's `min.insync.replicas` setting.
 
    The remainder of this document will use the address `kafka.example.com` for your Kafka.
 
@@ -123,8 +127,6 @@ The steps in this section only need to be done once to setup and install the nec
    You will need to use the domain name later when you run the demo.
 
 The remaining steps in this section are optional for using Kafka Connect:
-
-1. Kafka Connect will create some topics in your Kafka cluster, and some of those topics will have a replication value of 2. If your Kafka cluster is configured with `min.insync.replicas` having a value greater than 1, then ensure you have sufficient number of broker nodes in your cluster, or set `min.insync.replicas=1`.
 
 1. Using an editor, open `docker-compose.yml`.
 
