@@ -20,6 +20,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         server-id: maven.tenefit.com
+        server-password: ${{ secrets.TENEFIT_READ_PACKAGES }}
         java-version: ${{ matrix.java }}
     - name: Cache Maven packages
       uses: actions/cache@v2
