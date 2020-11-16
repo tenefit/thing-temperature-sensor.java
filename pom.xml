@@ -208,7 +208,7 @@
               </filters>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.tenefit.demo.things.temperatureSensor.TemperatureSensor</mainClass>
+                  <mainClass>com.tenefit.demo.things.temperatureSensor.Main</mainClass>
                   <manifestEntries>
                     <Name>com/tenefit/demo/things/temperatureSensor</Name>
                     <Specification-Title>${project.name}</Specification-Title>

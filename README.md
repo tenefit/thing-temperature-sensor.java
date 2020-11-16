@@ -18,27 +18,21 @@ $ mvn clean install
 
 To run a single sensor (replace `mqtt.demo.tenefit.cloud` with the appropriate domain):
 
-```
+```bash
 $ java -jar target/thing-temperature-sensor-develop-SNAPSHOT.jar \
-  -b mqtts://mqtt.demo.tenefit.cloud \
-  --state-topic /state \
-  --sensors-topic /sensors \
-  --control-topic /control \
-  --id 1 \
-  --row 1
+  -b mqtts://mqtt.demo.tenefit.cloud
 ```
 
-A convenient script is available that will launch 10 sensors in the background (replace `mqtt.demo.tenefit.cloud` with the appropriate domain):
+To run multiple sensors evenly distributed across multiple rows:
 
-```
-$ scripts/runall.sh mqtts://mqtt.demo.tenefit.cloud
+```bash
+$ java -jar target/thing-temperature-sensor-develop-SNAPSHOT.jar \
+    -b mqtts://mqtt.demo.tenefit.cloud \
+    --sensors 10 \
+    --rows 3
 ```
 
-To kill all sensors:
-
-```
-$ scripts/killall.sh
-```
+Use `--help` to see other parameters.
 
 ## Sensor details
 

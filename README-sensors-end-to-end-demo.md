@@ -121,7 +121,7 @@ The steps in this section only need to be done once to setup and install the nec
    It will be something like:
 
    ```
-   nta0h24o.streaming-staging.tenefit.cloud
+   ttospyuu.streaming.tenefit.cloud
    ```
 
    You will need to use the domain name later when you run the demo.
@@ -253,19 +253,13 @@ The remaining steps in this section are optional for using Kafka Connect:
 
 1. Start the MQTT sensors by opening a terminal window to the top-level directory where you cloned/forked this repo.
 
-   You'll need to use the domain name you were allocated by the tenefit.cloud console. To start the sensors, replace `nta0h24o.streaming-staging.tenefit.cloud` with your domain in the following command:
+   You'll need to use the domain name you were allocated by the tenefit.cloud console. To start the sensors, replace `ttospyuu.streaming.tenefit.cloud` with your domain in the following command:
 
-   ```
-   $ scripts/runall.sh mqtts://nta0h24o.streaming-staging.tenefit.cloud
-   ```
-
-   That will start 10 sensors in the background. A moment later you should see:
-
-   ```
-   sensor 1 connected
-   sensor 2 connected
-   sensor 3 connected
-   ...
+   ```bash
+   $ java -jar target/thing-temperature-sensor-develop-SNAPSHOT.jar \
+       -b mqtts://ttospyuu.streaming.tenefit.cloud \
+       --sensors 10 \
+       --rows 3
    ```
 
 1. Open the tenefit.cloud Console in a browser: https://console-staging.tenefit.cloud/. Sign in, if required.
@@ -297,13 +291,13 @@ The remaining steps in this section are optional for using Kafka Connect:
    It will be something like:
 
    ```
-   nta0h24o.streaming-staging.tenefit.cloud
+   ttospyuu.streaming.tenefit.cloud
    ```
 
-   Copy your domain name (not `nta0h24o.streaming-staging.tenefit.cloud`!), insert it into the following URL, and open it in a browser:
+   Copy your domain name (not `ttospyuu.streaming.tenefit.cloud`!), insert it into the following URL, and open it in a browser:
 
    ```
-   https://demo.tenefit.cloud/?domain=nta0h24o.streaming-staging.tenefit.cloud#sensors
+   https://demo.tenefit.cloud/?domain=ttospyuu.streaming.tenefit.cloud#sensors
    ```
 
    Be sure that you put your domain name after the `domain=` and before the `#sensors`.
@@ -328,30 +322,20 @@ That is the end of the main part of the demo. See the next section, [Post-demo c
 
 The remaining steps in this section are optional for using Kafka Connect:
 
-1. Back in your terminal window, kill the sensors:
-
-   ```
-   $ scripts/killall.sh
-   ```
+1. Back in your terminal window, kill the sensors using `Ctrl-C`.
 
 1. Now restart the sensors, but this time connecting to the MQTT broker running in Docker:
 
-   ```
-   $ scripts/runall.sh mqtt://localhost
-   ```
-
-   That will start 10 sensors in the background, connected to the Mosquitto MQTT broker running in Docker. A moment later you should see:
-
-   ```
-   sensor 1 connected
-   sensor 2 connected
-   sensor 3 connected
-   ...
+   ```bash
+   $ java -jar target/thing-temperature-sensor-develop-SNAPSHOT.jar \
+       -b mqtt://localhost \
+       --sensors 10 \
+       --rows 3
    ```
 
 1. Repeat the steps from before, by going to the tenefit.cloud console at https://console-staging.tenefit.cloud/ and looking at the live preview for the SSE endpoints.
 
-1. Return back to the sensor portal in a browser, remembering to use your own allocated domain: https://demo.tenefit.cloud/?domain=nta0h24o.streaming-staging.tenefit.cloud#sensors
+1. Return back to the sensor portal in a browser, remembering to use your own allocated domain: https://demo.tenefit.cloud/?domain=ttospyuu.streaming.tenefit.cloud#sensors
 
 1. Change the temperature unit you want to see.
 
@@ -359,11 +343,7 @@ The remaining steps in this section are optional for using Kafka Connect:
 
 ## Post-demo cleanup
 
-1. Stop the sensors:
-
-   ```
-   $ scripts/killall.sh
-   ```
+1. Stop the sensors by pressing `Ctrl-C`.
 
 1. Stop the microservice by pressing `Ctrl-C`.
 
