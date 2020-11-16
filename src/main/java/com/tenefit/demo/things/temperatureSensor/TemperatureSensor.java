@@ -7,7 +7,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Consumer;
 
 import com.github.rvesse.airline.annotations.Command;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
@@ -58,7 +57,6 @@ public class TemperatureSensor implements Runnable
     private final String controlTopic;
     private final long minInterval;
     private final long maxInterval;
-    private final Consumer<Long> incMessages;
 
     private SensorState state;
 
@@ -72,8 +70,7 @@ public class TemperatureSensor implements Runnable
         String sensorsTopic,
         String controlTopic,
         long minInterval,
-        long maxInterval,
-        Consumer<Long> incMessages)
+        long maxInterval)
     {
         this.id = id;
         this.row = row;
@@ -83,7 +80,6 @@ public class TemperatureSensor implements Runnable
         this.controlTopic = controlTopic;
         this.minInterval = minInterval;
         this.maxInterval = maxInterval >= minInterval ? maxInterval : minInterval;
-        this.incMessages = incMessages;
 
         state = SensorState.ON;
     }
@@ -161,7 +157,6 @@ public class TemperatureSensor implements Runnable
                 .userProperties(userProperties)
                 .qos(MqttQos.AT_MOST_ONCE)
                 .send();
-            incMessages.accept(1L);
         }
     }
 
