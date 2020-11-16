@@ -6,20 +6,10 @@ package com.tenefit.demo.things.temperatureSensor;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
-import javax.inject.Inject;
-
-import com.github.rvesse.airline.HelpOption;
-import com.github.rvesse.airline.SingleCommand;
 import com.github.rvesse.airline.annotations.Command;
-import com.github.rvesse.airline.annotations.Option;
-import com.github.rvesse.airline.annotations.restrictions.NotBlank;
-import com.github.rvesse.airline.annotations.restrictions.NotEmpty;
-import com.github.rvesse.airline.annotations.restrictions.Once;
-import com.github.rvesse.airline.annotations.restrictions.Pattern;
-import com.github.rvesse.airline.annotations.restrictions.Required;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
@@ -27,7 +17,7 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5ClientBuilder;
 import com.hivemq.client.mqtt.mqtt5.datatypes.Mqtt5UserProperties;
 
 @Command(name = "temperature-sensor", description = "Thing for publishing temperature readings")
-public class TemperatureSensor
+public class TemperatureSensor implements Runnable
 {
     public enum SensorState
     {
@@ -59,109 +49,57 @@ public class TemperatureSensor
     private final int minTemp = 75;
     private final int maxTemp = 200;
 
-    // milliseconds
-    private final long minReadingDelay = 500;
-    private final long maxReadingDelay = 2000;
+    private final String id;
+    private final String row;
 
-    @Inject
-    protected HelpOption<TemperatureSensor> help;
-
-    @Option(
-        name = { "--broker", "-b" },
-        description = "Scheme, address, and optional port for broker. Scheme values: mqtt|mqtts. Port default: 1883|8883" +
-            "Example: mqtts://mqtt.example.com")
-    @Required
-    @Once
-    @NotBlank
-    @NotEmpty
-    private String brokerAddress;
-
-    @Option(
-        name = { "--state-topic" },
-        description = "Output topic for state updates")
-    @Required
-    @Once
-    @NotBlank
-    @NotEmpty
-    private String stateTopic;
-
-    @Option(
-        name = { "--sensors-topic" },
-        description = "Output topic for sensor readings")
-    @Required
-    @Once
-    @NotBlank
-    @NotEmpty
-    private String sensorsTopicArg;
-
-    @Option(
-        name = { "--control-topic" },
-        description = "Input topic for control messages")
-    @Required
-    @Once
-    @NotBlank
-    @NotEmpty
-    private String controlTopic;
-
-    @Option(
-        name = { "--id" },
-        description = "Id for this sensor")
-    @Required
-    @Once
-    @NotBlank
-    @NotEmpty
-    private String id;
-
-    @Option(
-        name = { "--row" },
-        description = "Row this sensor is in")
-    @Required
-    @Once
-    @NotBlank
-    @NotEmpty
-    private String row;
-
-    @Option(
-        name = { "--state" },
-        description = "Initial state for this sensor. Values: [ON|OFF] default is ON")
-    @Pattern(pattern = "ON|OFF", flags = java.util.regex.Pattern.CASE_INSENSITIVE)
-    @Once
-    @NotBlank
-    @NotEmpty
-    private String stateOption;
-
-    private String sensorsTopic;
+    private final String brokerAddress;
+    private final String stateTopic;
+    private final String sensorsTopic;
+    private final String controlTopic;
+    private final long minInterval;
+    private final long maxInterval;
+    private final Consumer<Long> incMessages;
 
     private SensorState state;
 
     private Mqtt5BlockingClient client;
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException, URISyntaxException
+    public TemperatureSensor(
+        String id,
+        String row,
+        String brokerAddress,
+        String stateTopic,
+        String sensorsTopic,
+        String controlTopic,
+        long minInterval,
+        long maxInterval,
+        Consumer<Long> incMessages)
     {
-        SingleCommand<TemperatureSensor> parser = SingleCommand.singleCommand(TemperatureSensor.class);
-        TemperatureSensor temperatureSensor = parser.parse(args);
-        temperatureSensor.start();
+        this.id = id;
+        this.row = row;
+        this.brokerAddress = brokerAddress;
+        this.stateTopic = stateTopic;
+        this.sensorsTopic = sensorsTopic;
+        this.controlTopic = controlTopic;
+        this.minInterval = minInterval;
+        this.maxInterval = maxInterval >= minInterval ? maxInterval : minInterval;
+        this.incMessages = incMessages;
+
+        state = SensorState.ON;
     }
 
-    public void start() throws InterruptedException, URISyntaxException
+    @Override
+    public void run()
     {
-        if (help.showHelpIfRequested())
+        URI uri;
+        try
         {
-            return;
+            uri = new URI(brokerAddress);
         }
-
-        if (stateOption != null)
+        catch (URISyntaxException e)
         {
-            state = SensorState.valueOf(stateOption.toUpperCase());
+            throw new RuntimeException(e);
         }
-        else
-        {
-            state = SensorState.ON;
-        }
-
-        sensorsTopic = String.format("%s/%s", sensorsTopicArg, id);
-
-        final URI uri = new URI(brokerAddress);
         client = mqtt5ClientBuilder(Mqtt5Client.builder(), uri.getScheme())
             .serverHost(uri.getHost())
             .identifier(UUID.randomUUID().toString())
@@ -174,8 +112,8 @@ public class TemperatureSensor
 
         ControlSubscriber controlSubscriber = new ControlSubscriber(
             client,
-            String.format("%s/%s", stateTopic, id),
-            String.format("%s/%s", controlTopic, id),
+            stateTopic,
+            controlTopic,
             id,
             row,
             state,
@@ -186,8 +124,15 @@ public class TemperatureSensor
         while (true)
         {
             publishReadingIfNecessary();
-            long delay = ThreadLocalRandom.current().nextLong(minReadingDelay, maxReadingDelay + 1);
-            Thread.sleep(delay);
+            long delay = ThreadLocalRandom.current().nextLong(minInterval, maxInterval + 1);
+            try
+            {
+                Thread.sleep(delay);
+            }
+            catch (InterruptedException e)
+            {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -216,6 +161,7 @@ public class TemperatureSensor
                 .userProperties(userProperties)
                 .qos(MqttQos.AT_MOST_ONCE)
                 .send();
+            incMessages.accept(1L);
         }
     }
 
@@ -230,4 +176,5 @@ public class TemperatureSensor
             publishReadingIfNecessary();
         }
     }
+
 }
