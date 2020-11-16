@@ -115,6 +115,18 @@ public class Main
             return;
         }
 
+        if (verbose)
+        {
+            System.out.format("broker-address: %s\n", brokerAddress);
+            System.out.format("sensors:        %d\n", sensors);
+            System.out.format("rows:           %d\n", rows);
+            System.out.format("state-topic:    %s\n", stateTopic);
+            System.out.format("sensors-topic:  %s\n", sensorsTopic);
+            System.out.format("control-topic:  %s\n", controlTopic);
+            System.out.format("min-interval:   %d\n", minInterval);
+            System.out.format("max-interval:   %d\n", maxInterval);
+        }
+
         ExecutorService executorService = Executors.newFixedThreadPool(sensors);
         int row = 1;
         for (int i = 0; i < sensors; i++)
