@@ -3,9 +3,6 @@
  */
 package com.tenefit.demo.things.temperatureSensor;
 
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -104,10 +101,6 @@ public class Main
     @Once
     private boolean verbose;
 
-    private long messageCount = 0;
-    private long startMillis;
-    private String prevMessageRateStr;
-
     public static void main(String[] args) throws Exception
     {
         SingleCommand<Main> parser = SingleCommand.singleCommand(Main.class);
@@ -122,32 +115,6 @@ public class Main
             return;
         }
 
-        Timer timer = new Timer(); //At this line a new Thread will be created
-        timer.schedule(new TimerTask()
-        {
-
-            @Override
-            public void run()
-            {
-                if (messageCount > 0)
-                {
-                    long now = System.currentTimeMillis();
-                    long diff = (now - startMillis) / 1000;
-                    if (diff == 0)
-                    {
-                        return;
-                    }
-                    double rate = (double) messageCount / diff;
-                    String rateStr = String.format("%.1f", rate);
-                    if (!rateStr.equals(prevMessageRateStr))
-                    {
-                        System.out.format("rate: %s\n", rateStr);
-                    }
-                    prevMessageRateStr = rateStr;
-                }
-            }
-        }, Calendar.getInstance().getTime(), 1000);
-
         ExecutorService executorService = Executors.newFixedThreadPool(sensors);
         int row = 1;
         for (int i = 0; i < sensors; i++)
@@ -161,8 +128,7 @@ public class Main
                 sensorsTopic.replaceAll("%i", id),
                 controlTopic.replaceAll("%i", id),
                 minInterval,
-                maxInterval,
-                this::incMessages);
+                maxInterval);
 
             executorService.execute(sensor);
 
@@ -171,16 +137,5 @@ public class Main
                 row++;
             }
         }
-    }
-
-    private void incMessages(
-        Long numMessages)
-    {
-        // Start measuring from first message
-        if (messageCount == 0)
-        {
-            startMillis = System.currentTimeMillis();
-        }
-        messageCount += numMessages;
     }
 }
