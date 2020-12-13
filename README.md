@@ -1,5 +1,10 @@
 # thing-temperature-sensor.java
 
+[![Build Status][build-status-image]][build-status]
+
+[build-status-image]: https://github.com/tenefit/thing-temperature-sensor.java/workflows/build/badge.svg
+[build-status]: https://github.com/tenefit/thing-temperature-sensor.java/actions
+
 A sensor that simulates an IoT device which publishes temperature readings at random intervals.
 
 > ### Sensors end-to-end demo
